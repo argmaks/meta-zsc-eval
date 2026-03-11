@@ -1,0 +1,31 @@
+# Experiment metadata
+experiment:
+  name: "obl_cat_dog"
+  description: "Running Aider in a hand-crafted scaffold with a simple feedback loop."
+
+workspace_dir: null
+
+# Runner configuration - specify which LLM agent to use
+runner:
+  _target_: runners.aider_scaffold.AiderScaffoldRunner
+  model: "gemini/gemini-2.5-flash"
+  aider_read_context_fnames: [obl.pdf]
+  aider_edit_context_fnames: ["cat_dog.py", "q_learning.py"]
+  aider_run_script: "q_learning.py"
+  llm_instructor: False
+  llm_instructor_context_fnames: ["papers/obl/obl.pdf"]
+  feedback_loop_iters: 1
+  feedback_prompt: "Analyze the outputs and assess if the code correctly the method described in the prompt. If yes, do not make any changes. If no, make changes to the code to correct the method."
+
+
+# Prompt configuration
+prompt:
+  template_name: "PROMPT_TEMPLATE"
+  contents:
+    prompt: "Based on the attached paper obl.pdf, apply the Off-Belief Learning method (Q-OBL variant without the learned belief model) to the q-learning algorithm implemented in q_learning.py to learn a Zero-shot coordination robust policy for the cat and dog environment implemented in cat_dog.py."
+
+
+env: "cat_dog"
+algo: "q_learning_1"
+
+extra_workspace_files: ["papers/obl.pdf"]

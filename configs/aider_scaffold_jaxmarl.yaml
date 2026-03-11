@@ -1,0 +1,40 @@
+defaults:
+  - runner: ippo_ff_hanabi_full_hanabi
+
+# Experiment metadata
+experiment:
+  name: "hanabi"
+  description: "Running the Aider scaffold on the JaxMARL Hanabi environment."
+
+workspace_dir: null
+
+# Runner configuration - specify which LLM agent to use
+runner:
+  _target_: runners.aider_scaffold_jaxmarl.AiderScaffoldRunner
+  model: "openai/gpt-5"
+  aider_read_context_fnames: ["load_symmetries_alt.py"]
+  aider_edit_context_fnames: ["ippo_ff_hanabi.py", "networks.py"]
+  aider_run_script: "run.py"
+  llm_instructor: False
+  llm_instructor_context_fnames: []
+  feedback_loop_iters: 0
+  feedback_prompt: "Analyze the outputs and assess if the code correctly implements the method described in the prompt. If yes, do not make any changes. If no, make changes to the code to correct the method."
+      
+
+
+# Prompt configuration
+prompt:
+  template_name: "SYSTEM_TASK_EXTRA_METHOD_FROM_LATEX_TEMPLATE"
+  contents:
+    system_prompt: null
+    task: Based on the Zero-Shot Coordination method described in the attached latex block, implement the Other-play method to the algorithm implemented in `ippo_ff_hanabi.py`. Use the symmetries provided through `load_symmetries_alt.py` to implement the Other-play method. Importantly, in your implementation, let Other-Play be run by default.
+    extra_instructions: null
+    method_description_header: "Description of the Other-play method:"
+    tex_files: ["op/abstract.tex", "op/background.tex", "op/method.tex"]
+    method_description_footer: null
+
+env: jaxmarl
+
+algo: ippo_ff_hanabi
+
+extra_workspace_files: []

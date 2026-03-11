@@ -1,0 +1,29 @@
+defaults:
+  - runner: ippo_ff_hanabi
+
+# Experiment metadata
+experiment:
+  name: "pair_coding_jaxmarl"
+  description: "Evaluating the ability of LLMs to pair code ZSC methods. With this experiment, we initiate the inital workspace as well as the prompt and then let the human use their preferred LLM-based tool to continue pair-coding with the LLM."
+
+workspace_dir: null
+
+# Runner configuration - specify which LLM agent to use
+runner:
+  _target_: runners.initiate_pair_coding.InitiatePairCodingRunner
+  model: "gemini/gemini-2.5-pro"
+  coding_tool: "aider"
+  env: "jaxmarl"
+  algo: "ippo_ff_hanabi"
+
+
+# Prompt configuration
+prompt:
+  template_name: "PROMPT_TEMPLATE"
+  contents:
+    prompt: null
+
+env: jaxmarl
+algo: ippo_ff_hanabi
+
+extra_workspace_files: []

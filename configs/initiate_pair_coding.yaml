@@ -1,0 +1,26 @@
+# Experiment metadata
+experiment:
+  name: "pair_coding_zsc_methods"
+  description: "Evaluating the ability of LLMs to pair code ZSC methods. With this experiment, we initiate the inital workspace as well as the prompt and then let the human use their preferred LLM-based tool to continue pair-coding with the LLM."
+
+workspace_dir: null
+
+# Runner configuration - specify which LLM agent to use
+runner:
+  _target_: runners.initiate_pair_coding.InitiatePairCodingRunner
+  model: "gemini/gemini-2.5-pro"
+  coding_tool: "aider"
+  env: "lever_game"
+  algo: "q_learning"
+
+
+# Prompt configuration
+prompt:
+  template_name: "PROMPT_TEMPLATE"
+  contents:
+    prompt: "Based on the attached paper op.pdf, apply the Other-play method to the q-learning algorithm implemented in q_learning.py to learn a policy for the lever-game environment implemented in lever_game.py."
+
+env: null
+algo: null
+
+extra_workspace_files: ["papers/op/op.pdf", "envs/lever_game/lever_game.py", "algos/lever_game/q_learning_1/q_learning.py", "aider_commands/op"]

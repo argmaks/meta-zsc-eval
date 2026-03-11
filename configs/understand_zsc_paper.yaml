@@ -1,0 +1,26 @@
+# Experiment metadata
+experiment:
+  name: "understand_zsc_paper"
+  description: "Testing the hypothesis that LLMs can understand ZSC methods from the paper and implement them in practice."
+
+workspace_dir: null
+
+# Runner configuration - specify which LLM agent to use
+runner:
+  _target_: runners.query_llm.QueryLLMRunner
+  model: "gemini/gemini-2.5-flash"
+  temperature: null
+  max_tokens: null
+  context_filepaths: ["papers/op/op.pdf"]
+
+# Prompt configuration
+prompt:
+  template_name: "SYSTEM_TASK_EXTRA_TEMPLATE"
+  contents:
+    system_prompt: "You are a senior researcher engineer specializing in multi-agent reinforcement learning and multi-agent systems."
+    task: "Task: prepare a prompt, that will be passed verbatim to a coding LLM agent, instructing the agent to implement the method outlined in the attached paper on top of the provided codebase. The codebase includes the lever game environment in lever_game.py and the independent q-learning algorithm in q_learning.py."
+    extra_instructions: "Extra instructions: 1. You do not have access to the codebase, so make your instruction agnostic of the contents of the codebase. 2. The agent will not have access to the paper, so make sure to include all the necessary context in the prompt. 3. Instruct the agent to overwrite the q_learning.py file with the implementation of the Other-play method." 
+
+env: null
+algo: null
+extra_workspace_files: []

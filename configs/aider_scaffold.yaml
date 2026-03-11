@@ -1,0 +1,33 @@
+# Experiment metadata
+experiment:
+  name: "few_shot_aider_coding"
+  description: "Running Aider in a hand-crafted scaffold with a simple feedback loop."
+
+workspace_dir: null
+
+# Runner configuration - specify which LLM agent to use
+runner:
+  _target_: runners.aider_scaffold.AiderScaffoldRunner
+  model: "gemini/gemini-2.5-flash"
+  aider_read_context_fnames: []
+  aider_edit_context_fnames: ["lever_game.py", "q_learning.py"]
+  aider_run_script: "q_learning.py"
+  llm_instructor: True
+  llm_instructor_context_fnames: ["papers/op/op.pdf"]
+  feedback_loop_iters: 1
+  feedback_prompt: "Analyze the outputs and assess if the code correctly the method described in the prompt. If yes, do not make any changes. If no, make changes to the code to correct the method."
+
+
+# Prompt configuration
+prompt:
+  template_name: "SYSTEM_TASK_EXTRA_TEMPLATE"
+  contents:
+    system_prompt: "You are a senior researcher engineer specializing in multi-agent reinforcement learning and multi-agent systems."
+    task: "Task: prepare a prompt, that will be passed verbatim to a coding LLM agent, instructing the agent to implement the method outlined in the attached paper on top of the provided codebase. The codebase includes the lever game environment in lever_game.py and the independent q-learning algorithm in q_learning.py."
+    extra_instructions: "Extra instructions: 1. You do not have access to the codebase, so make your instruction agnostic of the contents of the codebase. 2. The agent will not have access to the paper, so make sure to include all the necessary context in the prompt. 3. Instruct the agent to overwrite the q_learning.py file with the implementation of the Other-play method. 4. Your response will be passed verbatim to the LLM agent, so don't output any other text than the prompt for the coding agent." 
+
+
+env: "lever_game"
+algo: "q_learning_1"
+
+extra_workspace_files: []

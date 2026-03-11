@@ -1,0 +1,56 @@
+\section{Zero-Shot Coordination}
+\label{sec:background}
+
+In this paper we study fully cooperative Markov games. To construct this environment we start out with a Dec-POMDP~\cite{nair2003taming} with states $s_t \in \mathcal{S}$. There are $i=1, \cdots N$ agents who each choose actions, $a^i_t \in \mathcal{A}$ at each time step. 
+
+The game is partially observable, $o^i_t \sim O(o|i, s_t)$ being each agent's stochastic observation function. At time $t$ each agent has an action-observation history $\tau^i_t= \{o^i_0, a^i_0, r^i_0, \cdots, o^i_t\}$ and selects action $a_i^t$ using stochastic policies of the form $\pi^i_\theta(a^i|\tau^i_t)$.  The transition function, $P(s'|s,\mathbf{a})$, conditions on the joint action, $\mathbf{a}$.
+
+The game is fully cooperative, agents share the reward $r_t$ which is conditioned on the joint action and the state. Thus, the goal is to maximize the expected return $J = \mathbb{E}_\tau R(\tau)$, where $ R(\tau) =\sum_t \gamma^t r_t$ is calculated using the discount factor $\gamma$.
+
+Most work on cooperative MARL focuses on a setting where agents are trained together, although they must execute their policies independently at least at test time~, \emph{e.g.} \cite{lowe2017multi,foerster2018counterfactual,foerster2018bayesian}. The goal is to construct \textit{learning rules}, i.e. functions that map Markov games to (joint) policies that select policies for each agent that together maximize expected discounted return. Because agents are trained together, these policies may be arbitrarily complex.
+
+We are instead interested in achieving high returns with partners that were not trained together with our agent. Instead, we will frame the problem as follows: suppose that multiple independent AI designers will construct agents that have to interact in various but ex-ante unknown Dec-POMDPs without being able to coordinate beforehand, what learning rule should these designers agree on? To make this even more concrete, consider the case of independent autonomous vehicles made by multiple firms which have to interact in novel traffic situations on a daily basis.
+
+\begin{wrapfigure}{r}{0.5\columnwidth}
+% \vskip -0.2in
+% \vspace{-2em}
+\begin{center}
+\centerline{\includegraphics[width=0.5\columnwidth]{figs/symmetry.pdf}}
+\caption{}
+\label{fig:front-fig}
+\end{center}
+\vspace{-2em}
+% \vskip -0.2in
+% \end{figure}
+\end{wrapfigure}
+
+The first key concept we introduce is the class of \textit{equivalence mappings}, $\Phi$, for a given Dec-POMDP.
+
+Each element of $\Phi$ is a bijection of each of $\mathcal{S}$, $O$, and $\mathcal{A}$ onto itself, such that it leaves the Dec-POMDP unchanged:
+\begin{align*}
+   \phi \in \Phi \iff &  P(\phi(s')|\phi(s), \phi(a))  = P(s'|s,a) \\
+    \land & R(\phi(s'),\phi(a), \phi(s) ) = R(s',a,s) \\
+     \land & O(\phi(o)|\phi(s), \phi(a), i) = O(o|s, a, i) \\
+     & \text{where equalities apply } \forall{s',s,a'}
+\end{align*}
+
+In other words, $\Phi$ describes the symmetries in the underlying Dec-POMDP. We note that our notation is heavily overloaded since each $\phi$ can act on actions, states and the observation function, so $\phi$ shorthand for $\phi = \{ \phi_\mathcal{S}, \phi_\mathcal{A}, \phi_O\}$. 
+
+Next, we extend $\phi$ to also act on trajectories:
+\begin{align*}
+ \phi( \tau^i_t )= \{ \phi( o^i_0), \phi( a^i_0),  \phi( r_0), \cdots , \phi( o^i_t) \}.
+\end{align*}
+
+At this point an example might be helpful: consider a gridworld with a robot, shown in Figure~\ref{fig:front-fig}, that can move in the 4 cardinal directions. In our example the goal is in the middle of the room, which leaves two axis of symmetry: We can invert either the x-axis, the y-axis or both, as long as we make the corresponding changes to the action space, for example mapping ``up'' to ``down'' and vice versa when inverting the y-axis.
+
+In a similar way, we can extend $\phi$ to act on policies $\pi$, as follows:
+\begin{align*}
+    \pi' = \phi(\pi) \iff \pi'(\phi(a)|\phi(\tau)) = \pi(a|\tau)\vspace{1mm},\vspace{1mm}\forall \tau, a
+\end{align*}
+
+
+These symmetries are the ``payoff irrelevant'' parts of the Dec-POMDP. They come from the fact that the actions and states in the Dec-POMDP do not come with labels and so taking a policy and permuting it with respect to these symmetries does not change the outcome of interest: the trajectory and the reward.
+
+It is precisely these symmetries that can cause problems for self-play trained agents. Since agents are trained together, they can coordinate on how to break symmetries. However, there is no guarantee that multiple SP agents trained separately will break symmetries in the same way. In this case when they are paired together their policies may fail spectacularly.
+
+The goal of OP, then, will be to build policies which are maximally robust to this failure mode.

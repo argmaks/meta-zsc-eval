@@ -1,0 +1,40 @@
+algo_config:
+  "SEED": 42
+  "NUM_SEEDS": 5
+  "SAVE_MODELS": True
+
+  "LR": 5e-4
+  "NUM_ENVS": 1024
+  "NUM_STEPS": 128
+  "TOTAL_TIMESTEPS": 1e7
+  "UPDATE_EPOCHS": 4
+  "NUM_MINIBATCHES": 4
+  "GAMMA": 0.99
+  "GAE_LAMBDA": 0.95
+  "CLIP_EPS": 0.2
+  "ENT_COEF": 0.01
+  "VF_COEF": 0.5
+  "MAX_GRAD_NORM": 0.5
+  "ENV_NAME": "hanabi"
+  "ENV_KWARGS": 
+    num_agents: 2
+    num_colors: 5
+    num_ranks: 5
+    hand_size: 5
+    max_info_tokens: 8
+    max_life_tokens: 3
+    num_cards_of_rank: [3, 2, 2, 2, 1]
+  "ANNEAL_LR": False
+
+  # WandB Params
+  "ENTITY": "maksymilianwolski-eth-z-rich"
+  "PROJECT": "jaxmarl"
+  "WANDB_MODE": "online"
+
+
+tests: 
+  test_runtime:
+    test_script: "test_runtime.py"
+    expected_runtime_seconds: 10
+  test_crossplay:
+    test_script: "test_crossplay.py"

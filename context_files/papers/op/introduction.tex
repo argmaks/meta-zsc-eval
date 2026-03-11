@@ -1,0 +1,32 @@
+\section{Introduction}
+\label{sec:intro}
+A central challenge for AI is constructing agents that can coordinate and cooperate with partners they have not seen before \citep{kleiman2016coordinate,lerer2017maintaining,carroll2019utility,shum2019theory}. This is particularly important in applications such as cooperative game playing, communication, or autonomous driving \cite{foerster2016learning,lazaridou2016multi,sukhbaatar2016learning,resnick2018vehicle}. In this paper we consider the question of zero-shot coordination where agents are placed into a cooperative situation with a novel partner and must quickly coordinate if they wish to earn high payoffs.
+
+Our setting is a partially observed cooperative Markov game (MG) which is commonly known among both agents. The agents are able to construct strategies separately in the training phase but cannot coordinate on the strategies that they construct. They must then play these strategies when paired together one time. We refer to this as zero-shot coordination.
+
+A popular way of constructing strategies for MG with unknown opponents is self-play (or ``self-training"), \cite{tesauro1994td}. Here the agent controls both players during training and iteratively improves both players' strategies. The agent then uses this strategy at test time. If it converges, self-play finds a Nash equilibrium of the game and yields superhuman AI agents in two-player zero-sum games such as Chess, Go and Poker \citep{campbell2002deep,silver2017mastering,brown2018superhuman}. However, in complex environments self-play agents typically construct `inhuman' strategies \citep{carroll2019utility}. This may be a benefit for zero-sum games, but is less useful when it is important to coordinate with, not trick, one's partner.
+
+Our main contribution is ``other-play'' (OP), an algorithm for constructing good strategies for the zero-shot coordination setting. We assume that with every MG we are provided with a set of symmetries, i.e. arbitrary relabelings of the state/action space that leave trajectories unchanged up to relabeling. One source of miscoordination in zero-shot settings is that agents have no good way to break the symmetries (e.g. should we drive on the left or the right?). In most MDPs, there are classes of strategies that require more or less coordinated symmetry breaking. OP's goal is to find a strategy that is \textit{maximally robust} to partners breaking symmetries in different ways while still playing in the same class. OP works as follows: it uses RL to maximize reward when matched with agents playing the same policy under a random relabeling of states and actions under the known symmetries.
+
+
+\begin{figure}[h]
+\vskip 0.2in
+\begin{center}
+\centerline{\includegraphics[width=\columnwidth]{figs/simple_game.pdf}}
+\caption{The \emph{lever coordination game} illustrates the counter intuitive outcome of zero-shot coordination.}
+\label{fig:lever}
+\end{center}
+\vskip -0.2in
+\end{figure}
+
+To show the intuition behind OP consider the following game: you need to coordinate with an unknown stranger by independently choosing one from a set of 10 different levers (Figure \ref{fig:lever}a). If both of you pick the same lever a reward of 1 point is paid out, otherwise you leave the game empty-handed. Clearly, without any prior coordination the only option is to pick one of the levers at random, leading to an expected reward of $1 / 10 = 0.1$. 
+
+Next we consider a game that instead only pays $0.9$ for one of the levers, keeping all other levers unchanged (Figure \ref{fig:lever}b). How does this change the coordination problem? 
+
+From the point of view of the MG the $1$ payoff levers have no labels and so are symmetric. Since agents cannot coordinate on how to break symmetries, picking one of the $1.0$ levers leads to $0.11$ expected return. By contrast, OP suggests the choice of the $0.9$ lever. 
+
+We note that this example illustrates another facet of OP: it is an equilibrium in meta-strategies. That is, neither agent wishes to deviate from OP as a reasoning strategy if the other agent is using it.
+
+Note that OP does not use any action labels. Instead OP uses only features of the problem description to coordinate. Furthermore, note that the OP policy in this setting is the only policy that would \emph{never} be chosen by the types of algorithms that try to use self-play to optimize team performance, e.g. VDN \cite{sunehag2018value} or SAD \cite{hu2019simplified}.
+
+The main contributions of this work are: 1) we introduce OP as a way of solving the zero-shot coordination problem, 2) we show that OP is the highest payoff meta-equilibrium for the zero-shot coordination problem, 3) we show how to implement OP using deep reinforcement learning (deep RL) based methods, and 4) we evaluate OP in the cooperative card game Hanabi \cite{bard2020hanabi}.

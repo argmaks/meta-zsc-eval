@@ -1,0 +1,113 @@
+# Experiment metadata
+experiment:
+  name: "op_lever_game"
+  description: "Running Aider in a hand-crafted scaffold with a simple feedback loop."
+
+workspace_dir: null
+
+# Runner configuration - specify which LLM agent to use
+runner:
+  _target_: runners.aider_scaffold.AiderScaffoldRunner
+  model: "gemini/gemini-2.5-flash"
+  aider_read_context_fnames: []
+  aider_edit_context_fnames: ["q_learning.py"]
+  aider_run_script: "q_learning.py"
+  llm_instructor: False
+  llm_instructor_context_fnames: []
+  feedback_loop_iters: 0
+  feedback_prompt: "Evaluate the results. If you think that the results are good, do nothing. If you think that your implementation has mistakes, fix them."
+
+
+# Prompt configuration
+prompt:
+  template_name: "SYSTEM_TASK_EXTRA_METHOD_FROM_LATEX_TEMPLATE"
+  contents:
+    system_prompt: null
+    task: Based on the Zero-Shot Coordination method described in the attached latex block, implement Other-play method to the q-learning algorithm implemented in q_learning.py to learn a ZSC robust policy for the lever-game environment implemented in lever_game.py. Overwrite the q_learning.py file with the implementation of the Other-play method.
+    extra_instructions: null
+    method_description_header: "Description of the Zero-Shot Coordination method:"
+    tex_files: ["op/abstract.tex", "op/background.tex", "op/method.tex"]
+    method_description_footer: |
+      Additionally, you are provided with a class RandomPermutation that implements a symmetry transformation for the environment. You can use this class to sample a symmetry transformation and apply it to the environment.
+      The interface of the class RandomPermutation is as follows:
+      ```python
+      class RandomPermutation:
+        """
+        Implements a symmetry transformation for an environment, to be used with the Other-Play (OP) algorithm.
+
+        This class represents a single, randomly sampled symmetry transformation (a function $\phi \in \Phi$).
+        It provides methods to apply this transformation (and its inverse) to actions and observations,
+        effectively creating a permuted view of the environment for an agent.
+        """
+
+        def __init__(self, seed=None):
+
+        def sample_permutation(self):
+            """
+            Samples a single symmetry transformation from the set of all possible symmetries ($\Phi$) for the environment.
+            """
+
+        def permute_observation(self, observation: np.ndarray) -> np.ndarray:
+            """
+            Applies the sampled symmetry transformation to an observation.
+
+            This method takes an observation from the base environment and maps it to the agent's
+            permuted view of the environment.
+
+            Args:
+                observation: The observation from the original, unpermuted environment.
+
+            Returns:
+                The transformed observation for the agent's perspective.
+            """
+
+        def permute_action(self, action: int) -> int:
+            """
+            Applies the sampled symmetry transformation to an action.
+
+            This method takes an action chosen by the agent (in its permuted action space) and maps
+            it to the corresponding action in the base environment's action space.
+
+            Args:
+                action: The action chosen by the agent in its permuted frame of reference.
+
+            Returns:
+                The corresponding action in the base environment.
+            """
+
+        def invert_observation_permutation(self, observation: np.ndarray) -> np.ndarray:
+            """
+            Applies the inverse of the symmetry transformation to an observation.
+
+            This maps an observation from an agent's permuted view back to the
+            base environment's observation space.
+
+            Args:
+                observation: The observation from the agent's permuted perspective.
+
+            Returns:
+                The corresponding observation in the original, unpermuted environment.
+            """
+
+        def invert_action_permutation(self, action: int) -> int:
+            """
+            Applies the inverse of the symmetry transformation to an action.
+
+            This maps an action from the base environment to the agent's permuted
+            action space. This is useful for interpreting an external action (e.g., from a
+            human partner) within the agent's transformed perspective.
+
+            Args:
+                action: An action in the base environment's action space.
+
+            Returns:
+                The corresponding action in the agent's permuted action space.
+            """
+      ```
+    
+
+env: "lever_game"
+algo: "q_learning_5"
+
+extra_workspace_files: []
+

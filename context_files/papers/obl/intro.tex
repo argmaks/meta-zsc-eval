@@ -1,0 +1,35 @@
+\section{Introduction}
+\label{sec:intro}
+
+
+An important goal of multi-agent reinforcement learning (MARL) research is to develop AI systems that can coordinate with novel partners, such as humans or other artificial agents, unseen at training time.
+However, the standard problem setting in cooperative MARL is \emph{self-play} (SP), where a team of agents is trained to find near optimal joint policies. Crucially, SP assumes that at test time all parties follow this policy faithfully, without considering the performance when paired with other agents.
+As a result, strong joint policies for SP often rely on efficient, yet arbitrary conventions
+~\cite{foerster2019bayesian}.
+
+
+Although SP agents achieve high scores among themselves, they often perform very poorly when paired with other, independently-trained agents or with humans because they cannot decipher the other agents' signals and intentions, and vice versa~\cite{carroll2019utility, bard2020hanabi, hu2020other}. Such agents fail because they rely too heavily on \emph{conventions} and other inferences that finely depend on their partner's policy, rather than on grounded information.
+
+For example, suppose in the board game Hanabi (detailed game rules in Section~\ref{sec:result}) our partner reveals the color of a particular card, e.g. green. We now know that the card is green. This is \emph{grounded} information. But we may also infer other information. If we have agreed on a \emph{convention} to only reveal the color of a card if it is playable, we can infer that the green card must also be playable. So under this shared convention in this situation ``green'' also means ``playable'', not simply ``green''.  
+
+Conventions may also be iterated to higher levels of \emph{cognitive depth}, where agents build more complex conventions on top of the baseline expectation that others are following earlier conventions.
+For example, \emph{not} playing a card that was hinted to be playable could be used as a signal for an even higher priority action.
+
+
+Agents trained via self-play tend to learn sets of conventions where the meaning of each action in each situation can vary unpredictably between different training runs. These conventions can be of arbitrarily high cognitive depth, which each agent expects the other to understand perfectly. 
+By contrast, humans often limit themselves to a cognitive depth of only a few levels~\cite{camerer2003}, and fewer when other agents are anticipated to be less experienced~\cite{agranov2012449}, across a wide variety of competitive and collaborative games. When collaborating with unknown partners for the first time, humans may still successfully communicate by simple grounded information sharing. They can avoid making fragile inferences based on their partner's unknown policy, while still planning their own actions and assuming that other players will respond ``reasonably''. This is a behavior that current methods cannot replicate. 
+
+In this paper, we present \emph{off-belief learning} (OBL), a MARL algorithm that addresses this gap in prior methods by controlling the cognitive reasoning depth, preventing the use of arbitrary conventions, while converging to optimal behavior under this constraint. Given a starting policy $\pi_0$, OBL agents follow a policy $\pi_1$ that, at each step, acts optimally assuming that all \emph{past actions} were taken by $\pi_0$ and all \emph{future actions} will be taken by $\pi_1$. Note that this includes accounting for the fact that future actions from $\pi_1$ will again be interpreted as if they were chosen by $\pi_0$. OBL can also be applied iteratively to obtain a hierarchy of policies that converges to a unique solution, making it a natural candidate for solving zero-shot coordination (ZSC) problems, where the goal is to maximize the test-time performance between polices from independent training runs of the same algorithm (cross-play).
+
+Our work is motivated by the question ``Can an agent act optimally, and expect other agents to do the same, \emph{without} assuming any shared conventions?''. In our work we formalize and answer this question affirmatively with OBL.
+
+
+In particular, if $\pi_0$ is a uniform random policy, then under OBL $\pi_1$ is an optimal \emph{grounded} policy, meaning that it plays the game relying only on the \emph{grounded information}, without assuming any conventions.
+This is because interpreting actions as coming from $\pi_0$ results in $\pi_1$ conditioning only on grounded information revealed by the environment due to actions taken (a card revealed to be green is green, even if interpreted as if it were revealed by a random agent), but no further information about any agent's private state, since regardless of private state, a uniform random agent takes all actions with equal probability.
+Crucially, since $\pi_1$ will act upon this grounded information optimally at future time steps, $\pi_1$ will still learn optimal \emph{grounded signaling}, i.e. taking actions specifically to reveal information other agents can use to take better actions.
+
+In this work, we first characterize OBL theoretically. We prove that OBL converges to a unique policy, i.e. given the same $\pi_0$, OBL produces the the same $\pi_1$ across independent training runs. We then prove that OBL is a policy improvement operator under certain conditions. We further show that when $\pi_0$ doesn't depend on private information, OBL will converge to an optimal grounded policy.
+We then evaluate OBL in both a toy setting and Hanabi. In the toy setting, we demonstrate that OBL learns an optimal grounded policy while other existing methods such as SP and Cognitive Hierarchies do not. In Hanabi, OBL finds fully-grounded policies that reach a score of 20.92 in SP without relying on conventions, an important data point that tells us how well we can perform in this benchmark without conventions. OBL also performs strongly in zero-shot coordination settings, achieving significantly higher cross-play scores than previous methods, particularly when iterated. Finally we find it also plays well in ad-hoc team play~\cite{stone2010ad} when paired with an agent trained by imitation learning from human data and two distinct agents trained with reinforcement learning, all of which are unseen during training time.
+
+
+

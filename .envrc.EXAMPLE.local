@@ -1,0 +1,11 @@
+## Please visit https://platform.openai.com/api-keys to create your OpenAI API Key
+export OPENAI_API_KEY=#TODO
+
+## Please visit https://aistudio.google.com/apikey to create your GOOGLE API KEY
+export GEMINI_API_KEY=#TODO
+
+## region where the model is accessible; if using Amazon Bedrock.
+export AWS_REGION_NAME=#TODO
+
+## WANDB API KEY
+export WANDB_API_KEY=#TODO

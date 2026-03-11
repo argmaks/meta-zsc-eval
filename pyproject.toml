@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "meta-zsc"
+description = "Coding LLMs implementing Zero-Shot Coordination methods"
+dynamic = ["version"]
+authors = [{ name = "QuantCo, Inc.", email = "noreply@quantco.com" }]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.10"
+
+[project.urls]
+repository = "https://github.com/quantco/meta-zsc"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.targets.wheel]
+packages = ["meta_zsc"]
+
+[project.scripts]

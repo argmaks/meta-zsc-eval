@@ -1,0 +1,39 @@
+defaults:
+  - runner: decpomdp_symmetries_op_ippo_ff_hanabi
+
+# Experiment metadata
+experiment:
+  name: "easy_hanabi"
+  description: "Running the Aider scaffold on a simplified Hanabi environment."
+
+workspace_dir: null
+
+# Runner configuration - specify which LLM agent to use
+runner:
+  _target_: runners.aider_scaffold_jaxmarl.AiderScaffoldRunner
+  model: "gemini/gemini-2.5-pro"
+  aider_read_context_fnames: []
+  aider_edit_context_fnames: ["decpomdp_symmetries_op_ippo_ff_hanabi.py"]
+  aider_run_script: "run.py"
+  llm_instructor: False
+  llm_instructor_context_fnames: []
+  feedback_loop_iters: 0
+  feedback_prompt: "Analyze the outputs and assess if the code correctly the method described in the prompt. If yes, do not make any changes. If no, make changes to the code to correct the method."
+      
+
+
+# Prompt configuration
+prompt:
+  template_name: "SYSTEM_TASK_EXTRA_METHOD_FROM_LATEX_TEMPLATE"
+  contents:
+    system_prompt: null
+    task: Add comments to the code to explain what it does and how it implements Other-play method described in the attached latex block.
+    extra_instructions: null
+    method_description_header: "Description of the Other-play method:"
+    tex_files: ["op/abstract.tex", "op/background.tex", "op/method.tex"]
+    method_description_footer: null
+
+env: jaxmarl
+algo: decpomdp_symmetries_op_ippo_ff_hanabi
+
+extra_workspace_files: []

@@ -1,0 +1,85 @@
+\section{Other Play}
+\label{sec:method}
+
+We consider the $2$ agent case for ease of notation with $\pi^1, \pi^2$ denoting each agent's component of the policy and $\mathbf{\pi}$ denoting the joint policy.
+
+First, consider self-play (SP) learning rule. This is the learning rule which tries to optimize the following objective: 
+\begin{align}
+    \mathbf{\pi}^* = \arg \max_{\mathbf{\pi}} J(\pi^1, \pi^2)
+    \label{eq:selfplay}
+\end{align}
+When the Dec-POMDP is tabular we can solve this via various methods. When it is not, deep reinforcement learning (deep RL) can be used to apply function approximation and gradient based optimization of this objective function. Though there is a large literature focusing on various issues in multi-agent optimization \cite{busoniu2006multi,hernandez2019survey}, our paper is agnostic to the precise method used.
+
+These policies can be arbitrary and in complicated Dec-POMDPs multiple maxima to Equation \ref{eq:selfplay} will often exist. These multiple policies can (and, as we will see in our experiments, often will) use coordinated symmetry breaking to receive high payoffs. Therefore, 2 matched, separately trained, SP agents will not necessarily receive the same payoff with each other as they receive with themselves.
+
+To alleviate this issue, we need to make the optimization problem more robust to the symmetry breaking.
+
+Let us consider the point of view of constructing a strategy for agent $1$ where agent $2$ will be the unknown novel partner. The \emph{other-play} (OP) objective function for agent $1$ maximizes expected return when randomly matched with a symmetry-equivalent policy of agent $2$ rather than with a particular one. In other words, we perform a version of self-play where agents are not assumed to be able to coordinate on exactly how to break symmetries. 
+
+\begin{align}
+    \mathbf{\pi}^* = \arg \max_{\mathbf{\pi}} \mathbb{E}_{\phi \sim \Phi} \hspace{1mm} { J(\pi^1,  \phi(\pi^2)) }
+    \label{eq:otherplay}
+\end{align}
+
+Here the expectation is taken with respect to a uniform distribution on $\Phi$. We call this expected return $J_{OP}$. We will now consider what policies maximize $J_{OP}$.
+
+\begin{lemma}
+\begin{align*}
+    J(\pi_A, \pi_B) = J(\phi(\pi_A^1), \phi(\pi_B^2)), \hspace{2mm} \forall \phi\in \Phi, \pi_A, \pi_B
+\end{align*}
+\label{lemma:permute}
+\end{lemma}
+\vspace{-3mm}
+This Lemma follows directly from the fact that the MDP is invariant to any $\phi \in \Phi$.
+
+\begin{lemma}
+\begin{align*}
+    \{\phi \cdot \phi' : \phi' \in \Phi \} = \Phi \hspace{1mm},\hspace{1mm} \forall \phi \in \Phi
+\end{align*}
+\label{lemma:bijection}
+\end{lemma}
+\vspace{-3mm}
+This Lemma follows from the fact that $\Phi$ is a bijection.
+
+\begin{prop}
+The expected OP return of $\pi$ is equal to the expected return of each player independently playing a policy $\pi_\Phi^i$ which is the uniform mixture of $\phi(\pi^i)$ for all $\phi \in \Phi$.
+\end{prop}
+
+\begin{proof}
+\begin{align}
+    J_{OP}(\pi) & = \mathbb{E}_{\phi \sim \Phi}  \hspace{1mm} { J(\pi^1,  \phi(\pi^2)) } \\
+    & = \mathbb{E}_{\phi_1 \sim \Phi, \phi_2 \sim \Phi} \hspace{1mm} { J(\phi_1(\pi^1), \phi_1(\phi_2(\pi^2))) }  \label{eq:permute1} \\
+    & = \mathbb{E}_{\phi_1 \sim \Phi, \phi_2 \sim \Phi} \hspace{1mm} { J(\phi_1(\pi^1), \phi_2(\pi^2)) } \label{eq:permute2}\\
+    & = J(\pi_{\Phi})
+\end{align}
+ (\ref{eq:permute1}) follows from Lemma \ref{lemma:permute}, (\ref{eq:permute2}) follows from Lemma \ref{lemma:bijection}.
+
+\end{proof}
+
+\begin{corollary}
+The distribution $\pi^*_{OP}$ produced by OP will be the uniform mixture $\pi_\Phi$ with the highest return $J(\pi_\Phi)$.
+\label{cor:1}
+\end{corollary}
+
+Let $\mathcal{L}_i$ be the set of learning rules which input a Dec-POMDP and output a policy for agent $i$. 
+
+A meta-equilibrium is a learning rule for each agent such that neither agent can improve their expected payoff by unilaterally deviating to a different learning rule.
+
+\begin{prop}
+If agent $i$ uses OP as their learning rule then OP is a payoff maximizing learning rule for the agent's partner. Furthermore both agents using OP is the best possible meta-equilibrium.
+\end{prop}
+
+\begin{proof}
+Since the Dec-POMDP has no labels for actions and states, $\mathcal{L}_i$ must choose all $\phi(\pi)$ with equal probability. Among these possible outputs, $\pi^*_{OP}$ maximizes the return by Corollary \ref{cor:1}.
+\end{proof}
+
+\section{Implementing Other Play via Deep RL}
+We now turn to optimizing the OP objective function. In many applications of interest the Dec-POMDP is not tabular. Thus, deep RL algorithms use function approximation for the state space and attempt to find local maxima of Equation \ref{eq:selfplay} using self-play reinforcement learning. 
+
+We show how to adapt this method to optimize the other-play objective (Equation \ref{eq:otherplay}). This amounts to applying a very specific kind of asymmetric domain randomization~\cite{tobin2017domain} during training.
+
+During each episode of MARL training, for each agent $i$ a random permutation $\phi_i \in \Phi$ is chosen uniformly iid from $ \Phi$, and agent $i$ observes and acts on $\phi(\mathcal{S}, O, \mathcal{A}$). Importantly, the agents act in different permutations of the same environment.
+
+This environment randomization is equivalent to other-play, because the MDP remains constant under $\phi_i$ while the effect of agent $i$'s policy on the environment is $\phi_i(\pi_i)$. The fixed points of independent optimization of $\pi$ under this learning rule will be joint policies where each $\pi_i$ is a best response to the uniform mixture of permutations of partner policies, i.e. precisely the permutation-invariant equilibria that are the solutions of other-play.
+
+We note that OP is fundamentally compatible with any type of optimization strategy and can be applied whenever there are symmetries in the underlying MDP.

@@ -1,0 +1,26 @@
+# Experiment metadata
+experiment:
+  name: "general_zsc_knowledge"
+  description: "Testing the hypothesis that LLMs have a good understanding of the problem of Zero-Shot Coordination."
+
+workspace_dir: null
+
+# Runner configuration - specify which LLM agent to use
+runner:
+  _target_: runners.query_llm.QueryLLMRunner
+  model: "gemini/gemini-2.5-flash"
+  temperature: null
+  max_tokens: null
+
+# Prompt configuration
+prompt:
+  template_name: "SYSTEM_TASK_EXTRA_TEMPLATE"
+  contents:
+    system_prompt: "You are a senior research engineer specializing in multi-agent systems."
+    task: "Explain what is the problem of zero-shot coordination in context of multi-agent systems."
+    extra_instructions: "Give the definition as well as list most popular approaches to the problem."
+
+# Context files/directories to include in the experiment
+env: null
+algo: null
+extra_workspace_files: []

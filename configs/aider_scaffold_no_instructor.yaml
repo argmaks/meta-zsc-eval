@@ -1,0 +1,31 @@
+# Experiment metadata
+experiment:
+  name: "few_shot_aider_coding"
+  description: "Running Aider in a hand-crafted scaffold with a simple feedback loop."
+
+workspace_dir: null
+
+# Runner configuration - specify which LLM agent to use
+runner:
+  _target_: runners.aider_scaffold.AiderScaffoldRunner
+  model: "gemini/gemini-2.5-flash"
+  aider_read_context_fnames: ["op.pdf"]
+  aider_edit_context_fnames: ["lever_game.py", "q_learning.py"]
+  aider_run_script: "q_learning.py"
+  llm_instructor: False
+  llm_instructor_context_fnames: ["papers/op/op.pdf"]
+  feedback_loop_iters: 1
+  feedback_prompt: "Evaluate the results. If you think that the results are good, do nothing. If you think that your implementation has mistakes, fix them."
+
+
+# Prompt configuration
+prompt:
+  template_name: "PROMPT_TEMPLATE"
+  contents:
+    prompt: "Based on the attached paper op.pdf, apply the Other-play method to the q-learning algorithm implemented in q_learning.py to learn a policy for the lever-game environment implemented in lever_game.py. Instruct the agent to overwrite the q_learning.py file with the implementation of the Other-play method."
+
+env: "lever_game"
+algo: "q_learning_1"
+
+extra_workspace_files: ["papers/op.pdf"]
+

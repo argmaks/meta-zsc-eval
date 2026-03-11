@@ -1,0 +1,32 @@
+# Default configuration for LLM experimentation pipeline
+
+# Experiment metadata
+experiment:
+  name: "default_experiment"
+  description: "Default LLM agent experiment"
+
+workspace_dir: null
+
+# Runner configuration - specify which LLM agent to use
+runner:
+  _target_: runners.query_llm.QueryLLMRunner
+  model: "gemini/gemini-2.5-flash"
+  reasoning_effort: null
+  temperature: null
+  max_tokens: null
+  response_format: null
+  tools: null
+  tool_choice: null
+
+# Prompt configuration
+prompt:
+  template_name: "SYSTEM_TASK_EXTRA_TEMPLATE"
+  contents:
+    system_prompt: "You are a senior research engineer specializing in multi-agent systems."
+    task: "In one sentence, summarize the contents of the attached paper."
+    extra_instructions: null
+
+# Context files/directories to include in the experiment
+env: null
+algo: null
+extra_workspace_files: []

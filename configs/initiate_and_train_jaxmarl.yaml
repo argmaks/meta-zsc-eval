@@ -1,0 +1,25 @@
+defaults:
+  - runner: ippo_ff_hanabi
+
+# Experiment metadata
+experiment:
+  name: "easy_hanabi"
+  description: "Initiating and training the ippo_ff_hanabi algorithm."
+
+workspace_dir: null
+
+# Runner configuration - specify which LLM agent to use
+runner:
+  _target_: runners.train_algo.TrainAlgoRunner
+  script_name: null # if null, no script is run. The user is expected to run the script manually. 
+
+# Prompt configuration
+prompt:
+  template_name: null
+  contents:
+    prompt: null
+
+env: "jaxmarl"
+algo: "ippo_ff_hanabi"
+
+extra_workspace_files: []

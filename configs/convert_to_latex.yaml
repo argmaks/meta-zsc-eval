@@ -1,0 +1,24 @@
+# Experiment metadata
+experiment:
+  name: "convert_paper_to_latex"
+  description: "Converting the paper to latex."
+
+workspace_dir: null
+
+# Runner configuration - specify which LLM agent to use
+runner:
+  _target_: runners.query_llm.QueryLLMRunner
+  model: "gemini/gemini-2.5-flash"
+  temperature: null
+  max_tokens: null
+  context_filepaths: ["papers/op/op.pdf"]
+
+# Prompt configuration
+prompt:
+  template_name: "PROMPT_TEMPLATE"
+  contents:
+    prompt: "Please extract the latex for Section 5. Implementing Other Play via Deep RL"
+
+env: null
+algo: null
+extra_workspace_files: []

@@ -1,0 +1,43 @@
+runner:
+  algo_config:
+    SEEDS: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+    SAVE_MODELS: true
+    LR: 0.0005
+    NUM_ENVS: 1024
+    NUM_STEPS: 128
+    TOTAL_TIMESTEPS: 1e10
+    # CHECKPOINT_AND_EVALUATE: true
+    # CHECKPOINT_TIMESTEPS: [1e6, 5e6, 1e7, 5e7, 1e8, 5e8, 1e9, 1.25e9, 1.5e9, 1.75e9, 2e9]
+    CHECKPOINT_TIMESTEPS: [1e6, 5e6, 1e7, 5e7, 1e8, 2e8, 4e8, 6e8, 8e8, 1e9, 1.5e9, 2e9, 2.5e9, 3e9, 3.5e9, 4e9, 4.5e9, 5e9, 5.5e9, 6e9, 6.5e9, 7e9, 7.5e9, 8e9, 8.5e9, 9e9, 9.5e9]
+    BREAK_AFTER_TIMESTEP: 2.5e9
+    BEST_OF_K: 3
+    UPDATE_EPOCHS: 4
+    NUM_MINIBATCHES: 4
+    GAMMA: 0.99
+    GAE_LAMBDA: 0.95
+    CLIP_EPS: 0.2
+    ENT_COEF: 0.01
+    VF_COEF: 0.5
+    MAX_GRAD_NORM: 0.5
+    ENV_NAME: hanabi
+    "ENV_KWARGS": 
+      num_agents: 2
+      num_colors: 5
+      num_ranks: 5
+      hand_size: 5
+      max_info_tokens: 8
+      max_life_tokens: 3
+      num_cards_of_rank: [3, 2, 2, 2, 1]
+    ANNEAL_LR: false
+    ENTITY: maksymilianwolski-eth-z-rich
+    PROJECT: jaxmarl
+    WANDB_MODE: disabled
+  tests:
+    test_runtime:
+      test_script: test_runtime.py
+      expected_runtime_seconds: 10
+    test_crossplay:
+      test_script: test_crossplay.py
+  _target_: runners.train_algo.TrainAlgoRunner
+  script_name: null
+

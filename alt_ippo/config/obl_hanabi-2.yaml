@@ -1,0 +1,58 @@
+# PPO Hyperparameters
+"LR": 5e-4
+"NUM_ENVS": 1024
+"NUM_STEPS": 128
+"TOTAL_TIMESTEPS": 1e10
+"UPDATE_EPOCHS": 4
+"NUM_MINIBATCHES": 4
+"GAMMA": 0.999
+"GAE_LAMBDA": 0.9 # !!!
+"CLIP_EPS": 0.2
+"VF_COEF": 0.5
+"MAX_GRAD_NORM": 0.5
+"ANNEAL_LR": True
+"ENT_COEF": 0.05 # !!!
+
+# Actor Critic Network Hyperparameters
+"CRITIC_CENTRALIZED": False # !!!
+"RNN": "LSTM" # !!!
+"NUM_RNN_LAYERS": 2
+"NUM_FF_LAYERS": 0
+"LAYER_WIDTH": 512
+"PUBLIC_RNN": False
+"ACTOR_FF_STREAM": False
+"CRITIC_FF_STREAM": False
+"MULTIPLY_PUBLIC_PRIVATE": True
+
+# Belief Model Hyperparameters
+"BM_LR": 1e-3
+"BM_NUM_STEPS": 128
+"BM_TOTAL_TIMESTEPS": 1.5e8
+"NUM_FF_LAYERS_ENCODER": 2
+"NUM_FF_LAYERS_DECODER": 0
+
+# OBL Hyperparameters
+"OBL": False # !!!
+"ACTING_PLAYER_ONLY": True # !!!
+"k": 2 # !!!
+
+# Environment Parameters
+"ENV_NAME": "hanabi"
+"ENV_KWARGS": {'num_agents': 2}
+
+# WandB Params
+ENTITY: maksymilianwolski-eth-z-rich
+PROJECT: jaxmarl
+WANDB_MODE: online
+"LOG_INTERVAL": 1000
+"XP_LOGGING": True
+"GREEDY_EVAL": True
+"SUFFIX": ""
+"CHECKPOINTS": False
+
+# Saving and Loading Weights
+"SEED": 10
+"TRAIN_POLICY": True
+"TRAIN_BELIEF_MODEL": False
+"ACTOR_CRITIC_FOLDER": False
+"BELIEF_MODEL_FOLDER": False
