@@ -2,7 +2,7 @@
 
 Evaluating how robust Zero Shot Coordination methods are to implementation details by sampling implementations via a custom LLM Coding agent.
 
-The agent is given a paper in .tex or .pdf and asked to implement the method described. We then subsample the correct implementations and evaluate them in cross-play across implementations.
+The agent is given a paper in .tex or .pdf and asked to implement the method described, train it and iterate until satisfactory. We then subsample the correct implementations and evaluate them in cross-play across implementations.
 
 ## Installation
 
